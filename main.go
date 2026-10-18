@@ -23,6 +23,16 @@ const petName string = "Momo"
 var scanner = bufio.NewScanner(os.Stdin)
 var petMemoriesRaw []Memory
 
+func cleanMemories() {
+	var aliveMemories []Memory
+	for _, m := range petMemoriesRaw {
+		if MemoryStrength(m) > 0.05 {
+			aliveMemories = append(aliveMemories, m)
+		}
+		petMemoriesRaw = aliveMemories
+		saveMemories()
+	}
+}
 func saveMemories() {
 	data, err := json.MarshalIndent(petMemoriesRaw, "", "	")
 	if err != nil {
@@ -78,10 +88,18 @@ func petMenu() {
 			return
 		}
 		petSay("Let me see what I remember!")
+		activeMemoryCount := 0
 		for _, value := range petMemoriesRaw {
+			strength := MemoryStrength(value)
+			if strength > 0.05 {
 
-			petSay(strconv.FormatFloat(MemoryStrength(value), 'f', 6, 64))
-			petSay(value.TImeLearned.Format("2006-01-02 15:04:05"))
+				petSay(strconv.FormatFloat(MemoryStrength(value), 'f', 6, 64))
+				petSay(value.TImeLearned.Format("2006-01-02 15:04:05"))
+				activeMemoryCount++
+			}
+		}
+		if activeMemoryCount == 0 {
+			petSay("Oh no... I've forgotten all my memories completely! You need to teach me again.")
 		}
 	case "3":
 		if (len(petMemoriesRaw)) == 0 {
@@ -138,6 +156,7 @@ func main() {
 	petSay("My brain is a little squishy")
 	fmt.Println()
 	for {
+		cleanMemories()
 		petMenu()
 	}
 }
