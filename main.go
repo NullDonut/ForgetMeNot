@@ -30,8 +30,8 @@ func cleanMemories() {
 			aliveMemories = append(aliveMemories, m)
 		}
 		petMemoriesRaw = aliveMemories
-		saveMemories()
 	}
+	saveMemories()
 }
 func saveMemories() {
 	data, err := json.MarshalIndent(petMemoriesRaw, "", "	")
