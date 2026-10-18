@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -53,8 +55,9 @@ func petMenu() {
 		}
 		petSay("Let me see what I remember!")
 		for _, value := range petMemoriesRaw {
+
+			petSay(strconv.FormatFloat(memoryStrength(value), 'f', 6, 64))
 			petSay(value.timeLearned.Format("2006-01-02 15:04:05"))
-			petSay(value.fact)
 		}
 	case "3":
 		petSay("Byeee")
@@ -76,6 +79,12 @@ func inputUser() string {
 	}
 	line = scanner.Text()
 	return line
+}
+func memoryStrength(value Memory) float64 {
+	k := 0.1
+	timeElapsed := time.Since(value.timeLearned).Hours()
+	currentStrength := (value.memoryStrength) * math.Pow(math.E, -1*k*timeElapsed)
+	return currentStrength
 }
 func main() {
 	petSay("Hi, I am momo")
