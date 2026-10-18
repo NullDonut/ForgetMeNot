@@ -4,12 +4,19 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 )
+
+type Memory struct {
+	fact           string
+	memoryStrength float64
+	timeLearned    time.Time
+}
 
 const petName string = "Momo"
 
 var scanner = bufio.NewScanner(os.Stdin)
-var petMemoriesRaw []string
+var petMemoriesRaw []Memory
 
 func petSay(msg string) {
 	fmt.Printf("%s: %s\n", petName, msg)
@@ -17,13 +24,13 @@ func petSay(msg string) {
 func petUserInputFeedback(fact string) {
 	petSay("I'll try to remember that!")
 	// petSay(fact)
-	petMemoriesRaw = append(petMemoriesRaw, fact)
+	var m = Memory{fact: fact, memoryStrength: 1.0, timeLearned: time.Now()}
+	petMemoriesRaw = append(petMemoriesRaw, m)
 	// fmt.Printf("You have this much memories: %d\n", len(petMemoriesRaw))
 }
 func petMenu() {
 	fmt.Println()
 	petSay("What should we do? ")
-	fmt.Println()
 	fmt.Println("1. Teach me something")
 	fmt.Println("2. What do you remember?")
 	fmt.Println("3. Quit")
@@ -42,10 +49,12 @@ func petMenu() {
 	case "2":
 		if (len(petMemoriesRaw)) == 0 {
 			petSay("I don't remember anything yet :( ,Teach me something")
+			petMenu()
 		}
 		petSay("Let me see what I remember!")
 		for _, value := range petMemoriesRaw {
-			petSay(value)
+			petSay(value.timeLearned.Format("2006-01-02 15:04:05"))
+			petSay(value.fact)
 		}
 	case "3":
 		petSay("Byeee")
