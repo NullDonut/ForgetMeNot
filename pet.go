@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"time"
 )
 
@@ -15,6 +16,17 @@ const (
 	ColorRed    = "\033[031m"
 )
 
+func petDream() {
+	if len(petMemoriesRaw) == 0 {
+		return
+	}
+
+	idx := rand.Intn(len(petMemoriesRaw))
+	mem := petMemoriesRaw[idx]
+
+	fmt.Println()
+	petSay(fmt.Sprintf("%s*yawns and rubs eyes* ...zzZ... Oh! I was just dreaming about.. \"%s\" ...zzZ%s", ColorPurple, mem.Fact, ColorReset))
+}
 func GetStrengthBar(strength float64) string {
 	totalBlocks := 10
 	filled := int(strength * float64(totalBlocks))
