@@ -1,11 +1,40 @@
 package main
 
 import (
-	"github.com/fatih/color"
+	"fmt"
 	"math"
 	"time"
 )
 
+const (
+	ColorReset  = "\033[m"
+	ColorCyan   = "\033[036m"
+	ColorGreen  = "\033[032m"
+	ColorYellow = "\033[033m"
+	ColorPurple = "\033[035m"
+	ColorRed    = "\033[031m"
+)
+
+func GetStrengthBar(strength float64) string {
+	totalBlocks := 10
+	filled := int(strength * float64(totalBlocks))
+	if filled > totalBlocks {
+		filled = totalBlocks
+	}
+	if filled < 0 {
+		filled = 0
+	}
+	bar := ""
+	for i := 0; i < totalBlocks; i++ {
+		if i < filled {
+			bar += "▇"
+
+		} else {
+			bar += "-"
+		}
+	}
+	return fmt.Sprintf("[%s] %.0f%%", bar, strength*100)
+}
 func MemoryStrength(value Memory) float64 {
 	k := 0.1
 	timeElapsed := time.Since(value.TimeLearned).Hours()
@@ -29,7 +58,7 @@ func memoryReinforce(mem *Memory) {
 }
 
 func petSay(msg string) {
-	color.Cyan("[Momo]: %s\n", msg)
+	fmt.Printf("%s[Momo]:%s %s\n", ColorCyan, ColorReset, msg)
 }
 func petUserInputFeedback(Fact string) {
 	petSay("I'll try to remember that!")
