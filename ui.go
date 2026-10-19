@@ -11,7 +11,9 @@ var scanner = bufio.NewScanner(os.Stdin)
 var petMemoriesRaw []Memory
 
 func petMenu() {
+	level, totalStrength := getPetLevel()
 	fmt.Println("\n====================================================")
+	fmt.Printf("	%s[Momo - Level %d]%s | Brain Power:%.3f\n", ColorPurple, level, ColorReset, totalStrength)
 	petSay("What should we do? ")
 	fmt.Println("------------------------------------------------------")
 	fmt.Printf("	%s1.%s Teach me something\n", ColorCyan, ColorReset)
@@ -85,7 +87,7 @@ func petMenu() {
 		}
 		memoryReinforce(&petMemoriesRaw[choiceIdxInt-1])
 		saveMemories()
-		petSay(fmt.Sprintf("%sYay! That memmory is refreshed back to 100% !%s", ColorGreen, ColorReset))
+		petSay(fmt.Sprintf("%s Yay! That memmory is refreshed back to 100%%! %s", ColorGreen, ColorReset))
 	case "4":
 		petSay("Byeee 1 Come back before I forget you!")
 		os.Exit(0)

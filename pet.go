@@ -27,6 +27,20 @@ func petDream() {
 	fmt.Println()
 	petSay(fmt.Sprintf("%s*yawns and rubs eyes* ...zzZ... Oh! I was just dreaming about.. \"%s\" ...zzZ%s", ColorPurple, mem.Fact, ColorReset))
 }
+func getPetLevel() (int, float64) {
+	totalStrength := 0.0
+	activeCount := 0
+
+	for _, m := range petMemoriesRaw {
+		strength := MemoryStrength(m)
+		if strength > 0.05 {
+			totalStrength += strength
+			activeCount++
+		}
+	}
+	level := 1 + int(totalStrength/3.0)
+	return level, totalStrength
+}
 func GetStrengthBar(strength float64) string {
 	totalBlocks := 10
 	filled := int(strength * float64(totalBlocks))
