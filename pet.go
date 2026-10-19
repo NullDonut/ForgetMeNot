@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"github.com/fatih/color"
 	"math"
 	"time"
 )
@@ -29,7 +29,7 @@ func memoryReinforce(mem *Memory) {
 }
 
 func petSay(msg string) {
-	fmt.Printf("%s : %s\n", petName, msg)
+	color.Cyan("[Momo]: %s\n", msg)
 }
 func petUserInputFeedback(Fact string) {
 	petSay("I'll try to remember that!")
