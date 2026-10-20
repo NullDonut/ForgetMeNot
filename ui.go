@@ -89,7 +89,9 @@ func petMenu() {
 			return
 		}
 		memoryReinforce(&petMemoriesRaw[choiceIdxInt-1])
-		saveMemories()
+		if err := saveMemories(); err != nil {
+			fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
+		}
 		petSay(fmt.Sprintf("%s Yay! That memmory is refreshed back to 100%%! %s", ColorGreen, ColorReset))
 	case "4":
 		petSay("Byeee 1 Come back before I forget you!")

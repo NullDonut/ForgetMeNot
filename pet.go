@@ -110,7 +110,9 @@ func cleanMemories() {
 		}
 	}
 	petMemoriesRaw = aliveMemories
-	saveMemories()
+	if err := saveMemories(); err != nil {
+		fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
+	}
 }
 
 func memoryReinforce(mem *Memory) {
@@ -130,5 +132,7 @@ func petUserInputFeedback(Fact string) {
 	petSay(fmt.Sprintf("%sI'll try to remember that!%s", ColorGreen, ColorReset))
 	var m = Memory{Fact: Fact, MemoryStrength: 1.0, TimeLearned: time.Now()}
 	petMemoriesRaw = append(petMemoriesRaw, m)
-	saveMemories()
+	if err := saveMemories(); err != nil {
+		fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
+	}
 }
