@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 var scanner = bufio.NewScanner(os.Stdin)
@@ -24,9 +25,11 @@ func petMenu() {
 
 	var choice string
 	fmt.Printf("%sChoice [1-4] >%s ", ColorYellow, ColorReset)
-	if scanner.Scan() {
-		choice = scanner.Text()
+	if !scanner.Scan() {
+		fmt.Println("\nGoodbye!")
+		os.Exit(0)
 	}
+	choice = strings.TrimSpace(scanner.Text())
 	fmt.Println()
 	switch choice {
 	case "1":
@@ -97,16 +100,13 @@ func petMenu() {
 	}
 }
 func inputUser() string {
-	var line string
 	fmt.Printf("> ")
 	if !scanner.Scan() {
 		if err := scanner.Err(); err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading line:", err)
-			os.Exit(1)
 		}
 		fmt.Println("\nNo Input Provided (EOF reached).")
-		os.Exit(1)
+		os.Exit(0)
 	}
-	line = scanner.Text()
-	return line
+	return strings.TrimSpace(scanner.Text())
 }
