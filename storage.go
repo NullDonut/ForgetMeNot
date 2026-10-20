@@ -4,14 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 )
 
-var fileIsCorrupted = false
-
 func saveMemories() error {
-	if fileIsCorrupted {
-		return fmt.Errorf("refusing to save: memory file was loaded in a corrupted state")
-	}
 	data, err := json.MarshalIndent(petMemoriesRaw, "", "	")
 	if err != nil {
 		return fmt.Errorf("failed to marshal memories: %w", err)
@@ -36,26 +32,17 @@ func loadMemories() {
 	}
 	data, err := os.ReadFile(memoryFile)
 	if err != nil {
-		fileIsCorrupted = true
-		backupName := memoryFile + ".bak"
-		_ = os.WriteFile(backupName, data, 0644)
-
-		fmt.Printf("%sCRITICAL ERROR:Memory file '%s' is corrupted!(%v) %s\n", ColorRed, memoryFile, err, ColorReset)
-		fmt.Printf("%sBacked up broken file to '%s'.Exiting to protect your data.Please fix or delete '%s'.%s\n", ColorYellow, backupName, memoryFile, ColorReset)
+		fmt.Printf("%sCould not read: '%s' : %v%s\n", ColorRed, memoryFile, err, ColorReset)
 		os.Exit(1)
 	}
 
 	var loadedMemories []Memory
 	err = json.Unmarshal(data, &loadedMemories)
 	if err != nil {
-		fileIsCorrupted = true
-
-		backupName := memoryFile + ".bak"
-		_ = os.WriteFile(backupName, data, 0644)
-		fmt.Printf("%sCRITICAL ERROR: Memory file '%s' is corrupted! (%v)%s\n", ColorRed, memoryFile, err, ColorReset)
-		fmt.Printf("%sBacked up broken file to '%s'.Momo will NOT overwrite your data%s\n", ColorYellow, backupName, ColorReset)
-		petMemoriesRaw = []Memory{}
-		return
+		backup := fmt.Sprintf("%s.%d.bak", memoryFile, time.Now().Unix())
+		_ = os.WriteFile(backup, data, 0644)
+		fmt.Printf("%sMemory file is corrupted (%v). Backed up to %s.Fix or delete it,then restart.%s\n", ColorRed, err, backup, ColorReset)
+		os.Exit(1)
 	}
 	petMemoriesRaw = loadedMemories
 }
