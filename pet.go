@@ -17,6 +17,31 @@ const (
 	ColorRed    = "\033[031m"
 )
 
+func memoryLapse(m *Memory) {
+	if m.Stability <= 0 {
+		m.Stability = 24.0
+	}
+	m.Stability *= 0.5
+	if m.Stability < 6.0 {
+		m.Stability = 6.0
+	}
+	m.TimeLearned = time.Now()
+}
+func getWeakestMemory() *Memory {
+	if len(petMemoriesRaw) == 0 {
+		return nil
+	}
+	var weakest *Memory
+	lowestStrength := 2.0
+	for i := range petMemoriesRaw {
+		str := MemoryStrength(petMemoriesRaw[i])
+		if str < lowestStrength {
+			lowestStrength = str
+			weakest = &petMemoriesRaw[i]
+		}
+	}
+	return weakest
+}
 func petMashup() {
 	if len(petMemoriesRaw) < 2 {
 		return

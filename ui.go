@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math/rand"
 	"os"
 	"strings"
 )
@@ -64,13 +63,11 @@ func petMenu() {
 			petSay("Oh no... I've forgotten all my memories completely! You need to teach me again.")
 		}
 	case "3":
-		if (len(petMemoriesRaw)) == 0 {
-			petSay("I don't remember anything yet :( ,Teach me something")
-			return
+		mem := getWeakestMemory()
+		if mem == nil {
+			petSay("I don't remember anything yet ;(Teach me something first!")
 		}
-		idx := rand.Intn(len(petMemoriesRaw))
-		mem := &petMemoriesRaw[idx]
-		petSay("Qioz time! Let's see if we can recall this memory: ")
+		petSay("Quiz time! Let's see if we can recall this memory: ")
 		fmt.Println("------------------------------------------------------")
 		words := strings.Fields(mem.Fact)
 		if len(words) > 1 {
@@ -88,7 +85,11 @@ func petMenu() {
 				}
 				petSay(fmt.Sprintf("%s Correct! Memory succesfully reinforced! (Stability doubled!)%s", ColorGreen, ColorReset))
 			} else {
-				petSay(fmt.Sprintf("%s Ah,not quite! The correct answer was '%s'.Let's study harder next time.%s", ColorRed, hiddenWord, ColorReset))
+				memoryLapse(mem)
+				if err := saveMemories(); err != nil {
+					fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
+				}
+				petSay(fmt.Sprintf("%s Ah,not quite! The correct answer was '%s'.Let's study harder next time.%s (Stability dropped)", ColorRed, hiddenWord, ColorReset))
 			}
 		} else {
 			fmt.Printf("Fact: %s \n", mem.Fact)
@@ -101,7 +102,11 @@ func petMenu() {
 				}
 				petSay(fmt.Sprintf("%s Nailed it!%s", ColorGreen, ColorReset))
 			} else {
-				petSay(fmt.Sprintf("%s Oops,that wasn't quite right.%s", ColorRed, ColorReset))
+				memoryLapse(mem)
+				if err := saveMemories(); err != nil {
+					fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
+				}
+				petSay(fmt.Sprintf("%s Oops,that wasn't quite right.(Stability dropped)%s", ColorRed, ColorReset))
 			}
 		}
 		fmt.Println("------------------------------------------------------")
