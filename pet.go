@@ -17,6 +17,38 @@ const (
 	ColorRed    = "\033[031m"
 )
 
+func petDreamGarbled() {
+	if len(petMemoriesRaw) == 0 {
+		return
+	}
+	idx := rand.Intn(len(petMemoriesRaw))
+	mem := petMemoriesRaw[idx]
+	strength := MemoryStrength(mem)
+
+	words := strings.Fields(mem.Fact)
+	if len(words) == 0 {
+		return
+	}
+
+	garbleProbability := 1.0 - strength
+
+	garbledWords := make([]string, len(words))
+	for i, word := range words {
+		if rand.Float64() < garbleProbability {
+			if rand.Float64() > 0.5 {
+				garbledWords[i] = "..."
+			} else {
+				garbledWords[i] = "zzZ"
+			}
+		} else {
+			garbledWords[i] = word
+		}
+	}
+	dreamText := strings.Join(garbledWords, " ")
+	fmt.Println()
+	petSay(fmt.Sprintf("%s*mumbles in sleep* ... %s ...%s", ColorPurple, dreamText, ColorReset))
+	fmt.Println()
+}
 func memoryLapse(m *Memory) {
 	if m.Stability <= 0 {
 		m.Stability = 24.0

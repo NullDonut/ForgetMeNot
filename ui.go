@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 )
@@ -11,6 +12,9 @@ var scanner = bufio.NewScanner(os.Stdin)
 var petMemoriesRaw []Memory
 
 func petMenu() {
+	if rand.Float64() < 0.15 {
+		petDreamGarbled()
+	}
 	level, totalStrength := getPetLevel()
 	fmt.Println("\n====================================================")
 	fmt.Printf("	%s[Momo - Level %d]%s | Brain Power:%.3f\n", ColorPurple, level, ColorReset, totalStrength)
