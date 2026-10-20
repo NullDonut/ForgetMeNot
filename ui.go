@@ -6,17 +6,56 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"unicode"
 )
 
 var scanner = bufio.NewScanner(os.Stdin)
 var petMemoriesRaw []Memory
 
-func petMenu() {
-	if rand.Float64() < 0.15 {
-		petDreamGarbled()
+func normalize(s string) string {
+	return strings.TrimFunc(strings.ToLower(strings.TrimSpace(s)),
+		func(r rune) bool { return !unicode.IsLetter(r) && !unicode.IsDigit(r) })
+}
+func runQuiz(mem *Memory) {
+	petSay("Quiz time! Can you complete this memory?")
+	fmt.Println("------------------------------------------------------")
+
+	words := strings.Fields(mem.Fact)
+	answer := mem.Fact
+	if len(words) > 1 {
+		i := rand.Intn(len(words))
+		answer = words[i]
+		words[i] = "____"
+		fmt.Println("Prompt:", strings.Join(words, " "))
+	} else {
+		r := []rune(answer)
+		fmt.Printf("Starts with '%c', %d letters\n", r[0], len(r))
 	}
-	if rand.Float64() < 0.10 {
+
+	fmt.Printf("%sYour answer >%s ", ColorYellow, ColorReset)
+	if normalize(inputUser()) == normalize(answer) {
+		mult := memoryReinforce(mem)
+		if mult == 1.0 {
+			petSay("Still fresh in my head! Ask me again later.")
+		} else {
+			petSay(fmt.Sprintf("%sCorrect! Stability *%.2f %s", ColorGreen, mult, ColorReset))
+		}
+	} else {
+		memoryLapse(mem)
+		petSay(fmt.Sprintf("%sNot quite! The answer was '%s'. (Stability dropped)%s", ColorRed, answer, ColorReset))
+	}
+	if err := saveMemories(); err != nil {
+		fmt.Printf("%sFailed to save: %v%s\n", ColorRed, err, ColorReset)
+	}
+	fmt.Println("------------------------------------------------------")
+}
+
+func petMenu() {
+	switch r := rand.Float64(); {
+	case r < 0.10:
 		petMashup()
+	case r < 0.15:
+		petDreamGarbled()
 	}
 	level, totalStrength := getPetLevel()
 	fmt.Println("\n====================================================")
@@ -75,53 +114,7 @@ func petMenu() {
 			petSay("I don't remember anything yet ;(Teach me something first!")
 			return
 		}
-		petSay("Quiz time! Let's see if we can recall this memory: ")
-		fmt.Println("------------------------------------------------------")
-		words := strings.Fields(mem.Fact)
-		if len(words) > 1 {
-			hiddenWord := words[len(words)-1]
-			words[len(words)-1] = "____"
-			fmt.Printf("Hint/Prompt: %s\n", strings.Join(words, " "))
-
-			fmt.Printf("%sType the missing word or full fact >%s", ColorYellow, ColorReset)
-			userAnswer := inputUser()
-
-			if strings.EqualFold(strings.TrimSpace(userAnswer), hiddenWord) || strings.EqualFold(strings.TrimSpace(userAnswer), mem.Fact) {
-				mult := memoryReinforce(mem)
-				if mult == 1.0 {
-					petSay("Still fresh in my head! Ask me again later.")
-				} else {
-					petSay(fmt.Sprintf("%sCorrect! Stability *%.2f%s", ColorGreen, mult, ColorReset))
-				}
-				if err := saveMemories(); err != nil {
-					fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
-				}
-			} else {
-				memoryLapse(mem)
-				if err := saveMemories(); err != nil {
-					fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
-				}
-				petSay(fmt.Sprintf("%s Ah,not quite! The correct answer was '%s'.Let's study harder next time.%s (Stability dropped)", ColorRed, hiddenWord, ColorReset))
-			}
-		} else {
-			fmt.Printf("Fact: %s \n", mem.Fact)
-			fmt.Printf("%sType it back to confirm >%s ", ColorYellow, ColorReset)
-			userAnswer := inputUser()
-			if strings.EqualFold(strings.TrimSpace(userAnswer), mem.Fact) {
-				memoryReinforce(mem)
-				if err := saveMemories(); err != nil {
-					fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
-				}
-				petSay(fmt.Sprintf("%s Nailed it!%s", ColorGreen, ColorReset))
-			} else {
-				memoryLapse(mem)
-				if err := saveMemories(); err != nil {
-					fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
-				}
-				petSay(fmt.Sprintf("%s Oops,that wasn't quite right.(Stability dropped)%s", ColorRed, ColorReset))
-			}
-		}
-		fmt.Println("------------------------------------------------------")
+		runQuiz(mem)
 	case "4":
 		petSay("Byeee 1 Come back before I forget you!")
 		os.Exit(0)

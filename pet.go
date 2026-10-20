@@ -109,18 +109,13 @@ func petMashup() {
 	fmt.Println()
 }
 func getPetLevel() (int, float64) {
-	totalStrength := 0.0
-	activeCount := 0
-
+	total, reviews := 0.0, 0
 	for _, m := range petMemoriesRaw {
-		strength := MemoryStrength(m)
-		if strength > 0.05 {
-			totalStrength += strength
-			activeCount++
-		}
+		total += MemoryStrength(m)
+		reviews += m.ReviewCount
 	}
-	level := 1 + int(totalStrength/3.0)
-	return level, totalStrength
+	return 1 + reviews/5, total
+
 }
 func GetStrengthBar(strength float64) string {
 	totalBlocks := 10
