@@ -38,6 +38,8 @@ cd ForgetMeNot && go build .
 ./forgetmenot
 ```
 
+## My devlog
+Definitely read my devlog , i have written a devlog before so spare me :( . Let me what to improve in my devlog. It is in [this file.](./Devlog.md)
 
 ## Idea and Inspiration 
 - My pyschology subject
