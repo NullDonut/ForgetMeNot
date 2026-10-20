@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -68,31 +68,43 @@ func petMenu() {
 			petSay("I don't remember anything yet :( ,Teach me something")
 			return
 		}
-		petSay("My memories... I  still remember a bit of these:")
+		idx := rand.Intn(len(petMemoriesRaw))
+		mem := &petMemoriesRaw[idx]
+		petSay("Qioz time! Let's see if we can recall this memory: ")
 		fmt.Println("------------------------------------------------------")
-		for i, value := range petMemoriesRaw {
-			strength := MemoryStrength(value)
-			if strength > 0.05 {
-				fmt.Printf("%s[%d]%s %s (Strength: %.0f%%)\n", ColorYellow, i+1, ColorReset, value.Fact, strength*100)
+		words := strings.Fields(mem.Fact)
+		if len(words) > 1 {
+			hiddenWord := words[len(words)-1]
+			words[len(words)-1] = "____"
+			fmt.Printf("Hint/Prompt: %s\n", strings.Join(words, " "))
+
+			fmt.Printf("%sType the missing word or full fact >%s", ColorYellow, ColorReset)
+			userAnswer := inputUser()
+
+			if strings.EqualFold(strings.TrimSpace(userAnswer), hiddenWord) || strings.EqualFold(strings.TrimSpace(userAnswer), mem.Fact) {
+				memoryReinforce(mem)
+				if err := saveMemories(); err != nil {
+					fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
+				}
+				petSay(fmt.Sprintf("%s Correct! Memory succesfully reinforced! (Stability doubled!)%s", ColorGreen, ColorReset))
+			} else {
+				petSay(fmt.Sprintf("%s Ah,not quite! The correct answer was '%s'.Let's study harder next time.%s", ColorRed, hiddenWord, ColorReset))
+			}
+		} else {
+			fmt.Printf("Fact: %s \n", mem.Fact)
+			fmt.Printf("%sType it back to confirm >%s ", ColorYellow, ColorReset)
+			userAnswer := inputUser()
+			if strings.EqualFold(strings.TrimSpace(userAnswer), mem.Fact) {
+				memoryReinforce(mem)
+				if err := saveMemories(); err != nil {
+					fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
+				}
+				petSay(fmt.Sprintf("%s Nailed it!%s", ColorGreen, ColorReset))
+			} else {
+				petSay(fmt.Sprintf("%s Oops,that wasn't quite right.%s", ColorRed, ColorReset))
 			}
 		}
 		fmt.Println("------------------------------------------------------")
-		fmt.Printf("%sChose a memory to reinforce >%s ", ColorYellow, ColorReset)
-		choiceIdx := inputUser()
-		choiceIdxInt, err := strconv.Atoi(choiceIdx)
-		if err != nil {
-			fmt.Println("Uhh you chose a wrong index..... My brain hurts...")
-			return
-		}
-		if !(0 < choiceIdxInt && choiceIdxInt <= len(petMemoriesRaw)) {
-			fmt.Println("Uhh i don't remember a memory with that number... :( Try again")
-			return
-		}
-		memoryReinforce(&petMemoriesRaw[choiceIdxInt-1])
-		if err := saveMemories(); err != nil {
-			fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
-		}
-		petSay(fmt.Sprintf("%s Yay! That memmory is refreshed back to 100%%! %s", ColorGreen, ColorReset))
 	case "4":
 		petSay("Byeee 1 Come back before I forget you!")
 		os.Exit(0)

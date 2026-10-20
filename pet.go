@@ -97,10 +97,24 @@ func GetStrengthBar(strength float64) string {
 	return fmt.Sprintf("[%s] %.0f%%", bar, strength*100)
 }
 func MemoryStrength(value Memory) float64 {
-	k := 0.1
-	timeElapsed := time.Since(value.TimeLearned).Hours()
-	currentStrength := (value.MemoryStrength) * math.Pow(math.E, -1*timeElapsed*k)
-	return currentStrength
+	stabilty := value.Stability
+	if stabilty <= 0 {
+		stabilty = 24.0
+	}
+
+	hoursElapsed := time.Since(value.TimeLearned).Hours()
+	if hoursElapsed < 0 {
+		hoursElapsed = 0
+	}
+	return math.Exp(-hoursElapsed / stabilty)
+}
+func memoryReinforce(m *Memory) {
+	m.ReviewCount++
+	if m.Stability <= 0 {
+		m.Stability = 24.0
+	}
+	m.Stability *= 2.0
+	m.TimeLearned = time.Now()
 }
 func cleanMemories() {
 	var aliveMemories []Memory
@@ -115,11 +129,6 @@ func cleanMemories() {
 	}
 }
 
-func memoryReinforce(mem *Memory) {
-	mem.MemoryStrength = 1
-	mem.TimeLearned = time.Now()
-}
-
 func petSay(msg string) {
 	fmt.Printf("%s[Momo]:%s %s\n", ColorCyan, ColorReset, msg)
 }
@@ -130,7 +139,7 @@ func petUserInputFeedback(Fact string) {
 		return
 	}
 	petSay(fmt.Sprintf("%sI'll try to remember that!%s", ColorGreen, ColorReset))
-	var m = Memory{Fact: Fact, MemoryStrength: 1.0, TimeLearned: time.Now()}
+	var m = Memory{Fact: Fact, Stability: 24.0, TimeLearned: time.Now(), ReviewCount: 1}
 	petMemoriesRaw = append(petMemoriesRaw, m)
 	if err := saveMemories(); err != nil {
 		fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)

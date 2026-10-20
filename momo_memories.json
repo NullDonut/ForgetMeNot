@@ -1,52 +1,26 @@
 [
 	{
-		"fact": "dehf",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T08:42:36.181331757Z"
+		"fact": "Go is awesome",
+		"time_learned": "2026-10-20T06:24:25.357828016Z",
+		"stability": 48,
+		"review_count": 2
 	},
 	{
-		"fact": "ojfrjpg",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T08:42:58.111324143Z"
+		"fact": "ejhd",
+		"time_learned": "2026-10-20T06:24:49.55265294Z",
+		"stability": 24,
+		"review_count": 1
 	},
 	{
-		"fact": "My name is Shivansh",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T05:49:29.437472446Z"
+		"fact": "eoojf",
+		"time_learned": "2026-10-20T06:25:20.291616327Z",
+		"stability": 48,
+		"review_count": 2
 	},
 	{
-		"fact": "Hi,You are momo",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T05:57:42.859827245Z"
-	},
-	{
-		"fact": "jjfrjg",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T08:37:22.705838816Z"
-	},
-	{
-		"fact": "jprirhgg",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T08:37:26.119866277Z"
-	},
-	{
-		"fact": "eotojg",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T08:37:28.518966201Z"
-	},
-	{
-		"fact": "gjog",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T08:38:04.117609587Z"
-	},
-	{
-		"fact": "4",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T08:40:54.003163136Z"
-	},
-	{
-		"fact": "ffhhg",
-		"memory_strength": 1,
-		"time_learned": "2026-10-19T08:42:43.890227143Z"
+		"fact": "Go is amazing",
+		"time_learned": "2026-10-20T06:25:49.652663098Z",
+		"stability": 48,
+		"review_count": 2
 	}
 ]
