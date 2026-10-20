@@ -15,6 +15,9 @@ func petMenu() {
 	if rand.Float64() < 0.15 {
 		petDreamGarbled()
 	}
+	if rand.Float64() < 0.10 {
+		petMashup()
+	}
 	level, totalStrength := getPetLevel()
 	fmt.Println("\n====================================================")
 	fmt.Printf("	%s[Momo - Level %d]%s | Brain Power:%.3f\n", ColorPurple, level, ColorReset, totalStrength)
@@ -84,11 +87,15 @@ func petMenu() {
 			userAnswer := inputUser()
 
 			if strings.EqualFold(strings.TrimSpace(userAnswer), hiddenWord) || strings.EqualFold(strings.TrimSpace(userAnswer), mem.Fact) {
-				memoryReinforce(mem)
+				mult := memoryReinforce(mem)
+				if mult == 1.0 {
+					petSay("Still fresh in my head! Ask me again later.")
+				} else {
+					petSay(fmt.Sprintf("%sCorrect! Stability *%.2f%s", ColorGreen, mult, ColorReset))
+				}
 				if err := saveMemories(); err != nil {
 					fmt.Printf("%sFailed to save memories: %v%s\n", ColorRed, err, ColorReset)
 				}
-				petSay(fmt.Sprintf("%s Correct! Memory succesfully reinforced! (Stability doubled!)%s", ColorGreen, ColorReset))
 			} else {
 				memoryLapse(mem)
 				if err := saveMemories(); err != nil {
@@ -119,8 +126,7 @@ func petMenu() {
 		petSay("Byeee 1 Come back before I forget you!")
 		os.Exit(0)
 	default:
-		petSay(fmt.Sprintf("%sI don't understand your choie ;( Retry plss....%s", ColorRed, ColorReset))
-		petMashup()
+		petSay(fmt.Sprintf("%sRetry plss....%s", ColorRed, ColorReset))
 	}
 }
 func inputUser() string {

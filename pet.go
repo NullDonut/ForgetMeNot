@@ -108,17 +108,6 @@ func petMashup() {
 	petSay(fmt.Sprintf("%s*scratches head* ...Wait! Is it true that %s %s...? My brain mixed up those up! %s", ColorPurple, firstHalf, secondHalf, ColorReset))
 	fmt.Println()
 }
-func petDream() {
-	if len(petMemoriesRaw) == 0 {
-		return
-	}
-
-	idx := rand.Intn(len(petMemoriesRaw))
-	mem := petMemoriesRaw[idx]
-
-	fmt.Println()
-	petSay(fmt.Sprintf("%s*yawns and rubs eyes* ...zzZ... Oh! I was just dreaming about.. \"%s\" ...zzZ%s", ColorPurple, mem.Fact, ColorReset))
-}
 func getPetLevel() (int, float64) {
 	totalStrength := 0.0
 	activeCount := 0
@@ -165,14 +154,11 @@ func MemoryStrength(value Memory) float64 {
 	}
 	return math.Exp(-hoursElapsed / stabilty)
 }
-func memoryReinforce(m *Memory) {
+func memoryReinforce(m *Memory) float64 {
 	currentStrength := MemoryStrength(*m)
 	if currentStrength > 0.9 {
-		m.ReviewCount++
-		m.TimeLearned = time.Now()
-		return
+		return 1.0
 	}
-	m.ReviewCount++
 	if m.Stability <= 0 {
 		m.Stability = 24.0
 	}
@@ -183,7 +169,9 @@ func memoryReinforce(m *Memory) {
 		multiplier = 1.5
 	}
 	m.Stability *= multiplier
+	m.ReviewCount++
 	m.TimeLearned = time.Now()
+	return multiplier
 }
 func cleanMemories() {
 	var aliveMemories []Memory
