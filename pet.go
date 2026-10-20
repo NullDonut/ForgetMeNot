@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -16,6 +17,31 @@ const (
 	ColorRed    = "\033[031m"
 )
 
+func petMashup() {
+	if len(petMemoriesRaw) < 2 {
+		return
+	}
+
+	idx1 := rand.Intn(len(petMemoriesRaw))
+	idx2 := rand.Intn(len(petMemoriesRaw))
+
+	for idx1 == idx2 {
+		idx2 = rand.Intn(len(petMemoriesRaw))
+	}
+
+	fact1 := petMemoriesRaw[idx1].Fact
+	fact2 := petMemoriesRaw[idx2].Fact
+
+	words1 := strings.Fields(fact1)
+	words2 := strings.Fields(fact2)
+
+	firstHalf := strings.Join(words1[:len(words1)/2+1], " ")
+	secondHalf := strings.Join(words2[:len(words2)/2], " ")
+
+	fmt.Println()
+	petSay(fmt.Sprintf("%s*scratches head* ...Wait! Is it true that %s %s...? My brain mixed up those up! %s", ColorPurple, firstHalf, secondHalf, ColorReset))
+
+}
 func petDream() {
 	if len(petMemoriesRaw) == 0 {
 		return

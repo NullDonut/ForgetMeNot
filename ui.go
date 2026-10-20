@@ -93,6 +93,7 @@ func petMenu() {
 		os.Exit(0)
 	default:
 		petSay(fmt.Sprintf("%sI don't understand your choie ;( Retry plss....%s", ColorRed, ColorReset))
+		petMashup()
 	}
 }
 func inputUser() string {
