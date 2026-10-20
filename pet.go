@@ -35,12 +35,21 @@ func petMashup() {
 	words1 := strings.Fields(fact1)
 	words2 := strings.Fields(fact2)
 
-	firstHalf := strings.Join(words1[:len(words1)/2+1], " ")
-	secondHalf := strings.Join(words2[:len(words2)/2], " ")
+	if len(words1) == 0 || len(words2) == 0 {
+		return
+	}
+	mid1 := len(words1) / 2
+	if mid1 == 0 {
+		mid1 = 1
+	}
+	mid2 := len(words2) / 2
+
+	firstHalf := strings.Join(words1[:mid1], " ")
+	secondHalf := strings.Join(words2[mid2:], " ")
 
 	fmt.Println()
 	petSay(fmt.Sprintf("%s*scratches head* ...Wait! Is it true that %s %s...? My brain mixed up those up! %s", ColorPurple, firstHalf, secondHalf, ColorReset))
-
+	fmt.Println()
 }
 func petDream() {
 	if len(petMemoriesRaw) == 0 {
@@ -113,7 +122,12 @@ func petSay(msg string) {
 	fmt.Printf("%s[Momo]:%s %s\n", ColorCyan, ColorReset, msg)
 }
 func petUserInputFeedback(Fact string) {
-	petSay("I'll try to remember that!")
+	trimmed := strings.TrimSpace(Fact)
+	if trimmed == "" {
+		petSay(fmt.Sprintf("%sYou didn't teach me anything! Give me actual words to remember.%s", ColorRed, ColorReset))
+		return
+	}
+	petSay(fmt.Sprintf("%sI'll try to remember that!%s", ColorGreen, ColorReset))
 	var m = Memory{Fact: Fact, MemoryStrength: 1.0, TimeLearned: time.Now()}
 	petMemoriesRaw = append(petMemoriesRaw, m)
 	saveMemories()
