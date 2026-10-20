@@ -53,9 +53,10 @@ func memoryLapse(m *Memory) {
 	if m.Stability <= 0 {
 		m.Stability = 24.0
 	}
-	m.Stability *= 0.5
-	if m.Stability < 6.0 {
-		m.Stability = 6.0
+	m.Stability = max(m.Stability*0.5, 6.0)
+	if MemoryStrength(*m) < 0.3 {
+		hours := -math.Log(0.3) * m.Stability
+		m.TimeLearned = time.Now().Add(-time.Duration(hours * float64(time.Hour)))
 	}
 }
 func getWeakestMemory() *Memory {
