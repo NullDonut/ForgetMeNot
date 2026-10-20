@@ -113,7 +113,14 @@ func memoryReinforce(m *Memory) {
 	if m.Stability <= 0 {
 		m.Stability = 24.0
 	}
-	m.Stability *= 2.0
+	currentStrength := MemoryStrength(*m)
+	multiplier := 2.0
+	if currentStrength > 0.8 {
+		multiplier = 1.25
+	} else if currentStrength > 0.5 {
+		multiplier = 1.5
+	}
+	m.Stability *= multiplier
 	m.TimeLearned = time.Now()
 }
 func cleanMemories() {
