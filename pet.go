@@ -169,11 +169,14 @@ func memoryReinforce(m *Memory) float64 {
 	return multiplier
 }
 func cleanMemories() {
-	var aliveMemories []Memory
+	aliveMemories := []Memory{}
 	for _, m := range petMemoriesRaw {
 		if MemoryStrength(m) > 0.05 {
 			aliveMemories = append(aliveMemories, m)
 		}
+	}
+	if len(aliveMemories) == len(petMemoriesRaw) {
+		return
 	}
 	petMemoriesRaw = aliveMemories
 	if err := saveMemories(); err != nil {
@@ -182,7 +185,7 @@ func cleanMemories() {
 }
 
 func petSay(msg string) {
-	fmt.Printf("%s[Momo]:%s %s\n", ColorCyan, ColorReset, msg)
+	fmt.Printf("%s[%s]:%s %s\n", ColorCyan, petName, ColorReset, msg)
 }
 func petUserInputFeedback(Fact string) {
 	trimmed := strings.TrimSpace(Fact)

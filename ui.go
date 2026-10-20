@@ -22,18 +22,23 @@ func runQuiz(mem *Memory) {
 
 	words := strings.Fields(mem.Fact)
 	answer := mem.Fact
-	if len(words) > 1 {
-		i := rand.Intn(len(words))
+	var candidates []int
+	for i, w := range words {
+		if normalize(w) != "" {
+			candidates = append(candidates, i)
+		}
+	}
+	if len(words) > 1 && len(candidates) > 0 {
+		i := candidates[rand.Intn(len(candidates))]
 		answer = words[i]
 		words[i] = "____"
 		fmt.Println("Prompt:", strings.Join(words, " "))
 	} else {
 		r := []rune(answer)
-		fmt.Printf("Starts with '%c', %d letters\n", r[0], len(r))
+		fmt.Printf("Starts with '%c' , %d letters\n", r[0], len(r))
 	}
-
-	fmt.Printf("%sYour answer >%s ", ColorYellow, ColorReset)
-	if normalize(inputUser()) == normalize(answer) {
+	userAnswer := normalize(inputUser())
+	if userAnswer != "" && userAnswer == normalize(answer) {
 		mult := memoryReinforce(mem)
 		if mult == 1.0 {
 			petSay("Still fresh in my head! Ask me again later.")
