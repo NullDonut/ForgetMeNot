@@ -36,9 +36,13 @@ func loadMemories() {
 	}
 	data, err := os.ReadFile(memoryFile)
 	if err != nil {
-		fmt.Printf("%sWarning: Could not read the memory file (%v).Starting fresh.%s\n", ColorRed, err, ColorReset)
-		petMemoriesRaw = []Memory{}
-		return
+		fileIsCorrupted = true
+		backupName := memoryFile + ".bak"
+		_ = os.WriteFile(backupName, data, 0644)
+
+		fmt.Printf("%sCRITICAL ERROR:Memory file '%s' is corrupted!(%v) %s\n", ColorRed, memoryFile, err, ColorReset)
+		fmt.Printf("%sBacked up broken file to '%s'.Exiting to protect your data.Please fix or delete '%s'.%s\n", ColorYellow, backupName, memoryFile, ColorReset)
+		os.Exit(1)
 	}
 
 	var loadedMemories []Memory

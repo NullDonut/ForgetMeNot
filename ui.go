@@ -70,6 +70,7 @@ func petMenu() {
 		mem := getWeakestMemory()
 		if mem == nil {
 			petSay("I don't remember anything yet ;(Teach me something first!")
+			return
 		}
 		petSay("Quiz time! Let's see if we can recall this memory: ")
 		fmt.Println("------------------------------------------------------")

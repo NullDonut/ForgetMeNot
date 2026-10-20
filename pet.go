@@ -57,7 +57,6 @@ func memoryLapse(m *Memory) {
 	if m.Stability < 6.0 {
 		m.Stability = 6.0
 	}
-	m.TimeLearned = time.Now()
 }
 func getWeakestMemory() *Memory {
 	if len(petMemoriesRaw) == 0 {
@@ -166,11 +165,16 @@ func MemoryStrength(value Memory) float64 {
 	return math.Exp(-hoursElapsed / stabilty)
 }
 func memoryReinforce(m *Memory) {
+	currentStrength := MemoryStrength(*m)
+	if currentStrength > 0.9 {
+		m.ReviewCount++
+		m.TimeLearned = time.Now()
+		return
+	}
 	m.ReviewCount++
 	if m.Stability <= 0 {
 		m.Stability = 24.0
 	}
-	currentStrength := MemoryStrength(*m)
 	multiplier := 2.0
 	if currentStrength > 0.8 {
 		multiplier = 1.25
