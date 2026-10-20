@@ -50,4 +50,5 @@ ForgetMeNot: a bot pet with a squishy brain that learns facts you teach it, then
 go test ./...
 
 ## License
-MIT
+UnLicense
+
